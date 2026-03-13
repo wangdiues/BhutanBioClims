@@ -1,0 +1,66 @@
+name: Deploy Modeling Guide
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/deploy-modeling-guide.yml
+      - 00_project_metadata/modeling_guide.html
+      - 00_project_metadata/variable_dictionary.csv
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build Pages artifact
+        shell: bash
+        run: |
+          mkdir -p site/00_project_metadata
+          cp 00_project_metadata/modeling_guide.html site/00_project_metadata/modeling_guide.html
+          cp 00_project_metadata/variable_dictionary.csv site/00_project_metadata/variable_dictionary.csv
+          touch site/.nojekyll
+          cat > site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="refresh" content="0; url=./00_project_metadata/modeling_guide.html">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Redirecting to Modeling Guide</title>
+            <link rel="canonical" href="./00_project_metadata/modeling_guide.html">
+          </head>
+          <body>
+            <p><a href="./00_project_metadata/modeling_guide.html">Open the modeling guide</a></p>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
