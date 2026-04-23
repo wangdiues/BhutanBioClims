@@ -1,7 +1,7 @@
 Bhutan CMIP6 BIOCLIM Dataset Infrastructure
 
 Software citation:
-Wangdi Wangdi (2026). Bhutan CMIP6 BIOCLIM Dataset Infrastructure (v1.0).
+Wangdi (2026). Bhutan CMIP6 BIOCLIM Dataset Infrastructure (v1.0).
 
 Author Affiliation:
 Forest Resources Planning and Management Division,

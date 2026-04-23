@@ -23,6 +23,7 @@
 - Full citation metadata: `citation.cff`, `citation.txt`
 - Source DOI and provenance documented in `data_provenance.md`
 - Variable definitions, units, and file naming conventions documented in `variable_dictionary.csv` and `README_BhutanBioClims.md`
+- Full methodological detail (bias correction, BIO variable formulas, ensemble approach, VIF screening) documented in `METHODS.md`
 - MIT licence for pipeline code; source data licence: CC BY 4.0 (CSIRO)
 
 ---

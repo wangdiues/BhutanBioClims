@@ -4,8 +4,7 @@ title: "Bhutan CMIP6 BIOCLIM Dataset Infrastructure"
 version: "1.0.0"
 date-released: "2026-02-22"
 authors:
-  - family-names: "Wangdi"
-    given-names: "Wangdi"
+  - name: "Wangdi"
     affiliation: "Forest Resources Planning and Management Division, Department of Forests and Park Services, Ministry of Energy and Natural Resources, Royal Government of Bhutan, Thimphu, Bhutan"
     orcid: "https://orcid.org/0009-0007-7726-1742"
 keywords:

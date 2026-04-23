@@ -79,6 +79,12 @@ See `00_project_metadata/` for:
 
 ---
 
+## Methods
+
+Bioclimatic variables (BIO1–BIO19) follow the standard definitions of O'Donnell & Ignizio (2012) and Nix (1986), computed from monthly tasmin, tasmax, and pr rasters using the R `terra` package. Source climate grids (Dorji et al., 2025) are pre-bias-corrected and downscaled to 250 m by the CSIRO team using a delta-change approach; no additional bias correction is applied in this pipeline. See `METHODS.md` for full methodological detail.
+
+---
+
 ## Citation
 
 If you use this pipeline or its outputs, please cite both this repository and the source dataset:
