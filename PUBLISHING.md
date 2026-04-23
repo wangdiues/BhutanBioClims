@@ -1,104 +1,64 @@
 # Publishing Guide
 
-This project should be published in two parts:
+This repository contains **processing code and metadata only**. The underlying climate data is not hosted here and is not redistributed.
 
-1. GitHub repository for code, metadata, and workflow files.
-2. External dataset host for large raster outputs and other heavy artifacts.
+---
 
-The current repository already reflects that split:
+## Distribution Model
 
-- Keep in GitHub: `README.md`, `LICENSE`, `.github/`, `00_project_metadata/`, `10_scripts/`
-- Keep out of GitHub: `01_raw_cmip6_data/` through `09_release/`, plus `*.tif`, `*.tiff`, `*.vrt`
+| Component | Platform | Notes |
+|-----------|----------|-------|
+| Code & Metadata | GitHub (this repository) | Scripts, documentation, workflow definitions |
+| Source Climate Data | CSIRO Data Access Portal | Dorji et al. (2025) — DOI: 10.25919/pec2-hs50 |
 
-## 1. Prepare the code repository
+Users download source data from CSIRO and use the scripts in this repository to reproduce the bioclimatic variable pipeline.
 
-Before publishing:
+---
 
-- Review `README.md`
-- Review `00_project_metadata/citation.cff`
-- Review `00_project_metadata/data_access.md`
-- Review `00_project_metadata/data_download.md`
-- Confirm `.gitignore` still excludes heavy data folders
+## What Is Tracked in Git
 
-This folder is not currently an initialized Git repository, so start there:
+**Included:**
+- `README.md`, `LICENSE`, `PUBLISHING.md`
+- `.github/` (CI workflows)
+- `00_project_metadata/` (citation, provenance, variable dictionaries)
+- `10_scripts/` (R and PowerShell pipeline scripts)
 
-```powershell
-cd E:\cmip6_bioclim_bhutan_v1_0
-git init
-git add README.md LICENSE .gitignore .gitattributes PUBLISHING.md
-git add .github 00_project_metadata 10_scripts
-git commit -m "Initial public release: code and metadata only"
-```
+**Excluded (heavy data, not redistributed):**
+- `01_raw_cmip6_data/` through `09_release/`
+- `*.tif`, `*.tiff`, `*.vrt`
 
-Then create an empty GitHub repository and connect it:
+---
 
-```powershell
-git remote add origin https://github.com/<your-user>/<your-repo>.git
-git branch -M main
-git push -u origin main
-```
+## Publishing Checklist
 
-## 2. Publish the data separately
+- [x] Code repository live on GitHub
+- [x] GitHub release v1.0.0 tagged
+- [x] Citation metadata in `00_project_metadata/citation.cff`
+- [x] Source data DOI (10.25919/pec2-hs50) referenced in all documentation
 
-This repository contains many large raster files. Do not push those into the GitHub code repository.
+---
 
-Recommended dataset contents for external hosting:
+## Creating a GitHub Release
 
-- `01_raw_cmip6_data/`
-- `02_bias_corrected_data/`
-- `03_bioclim_variables/`
-- `04_ensemble_products/`
-- `05_multicollinearity_analysis/`
-- `06_quality_control/`
-- `07_logs/`
-- `08_model_ready_layers/`
-- `09_release/`
-- `00_project_metadata/data_manifest.csv`
-- `00_project_metadata/checksums_sha256.csv`
-- `00_project_metadata/huggingface_dataset_card.md`
-
-Recommended host:
-
-- Hugging Face Dataset repo for the raster archive
-
-Suggested dataset layout:
-
-- Keep the stage-based folder structure unchanged
-- Add the dataset card from `00_project_metadata/huggingface_dataset_card.md`
-- Include checksums and manifest files with the upload
-
-## 3. Create a release version
-
-Once the GitHub code repository is pushed:
-
-```powershell
+```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Use `09_release/v1_0_0/changelog.md` as the basis for the GitHub release notes.
+Use `09_release/v1_0_0/changelog.md` as the basis for release notes.
 
-## 4. Link the two publications
+---
 
-After both are live:
+## Linking Everything
 
-- Add the dataset URL to `README.md`
-- Add the dataset URL to `00_project_metadata/data_access.md`
-- Add the dataset URL to `00_project_metadata/data_download.md`
-- If you mint a DOI later, add it to `00_project_metadata/citation.cff`
+Ensure the following files all reference the CSIRO source DOI and the GitHub repository URL:
 
-## 5. Recommended publication order
+- `README.md`
+- `00_project_metadata/data_access.md`
+- `00_project_metadata/data_download.md`
+- `00_project_metadata/citation.cff`
 
-1. Clean the code repository so it only contains publishable code and metadata.
-2. Push the GitHub repository.
-3. Upload the heavy data to the external dataset host.
-4. Create the `v1.0.0` GitHub release.
-5. Update metadata files with the final public links.
+---
 
-## Practical recommendation
-
-For this project, the simplest public setup is:
-
-- GitHub: reproducible pipeline, metadata, citation, and release notes
-- Hugging Face: rasters and QC outputs
-- Optional Zenodo later: DOI for the GitHub release
+**Document Version**: 2.0
+**Last Updated**: 2026-04-23

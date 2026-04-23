@@ -35,3 +35,6 @@ temp_rasters/
 *.tif
 *.tiff
 *.vrt
+
+# Claude Code memory
+.claude/
