@@ -1012,7 +1012,7 @@
           <h2><span class="section-tag">Overview</span>Abstract</h2>
         </div>
         <p>This protocol describes the development and application of <strong>BhutanBioClims</strong>—a comprehensive, high-resolution (250 m) bioclimatic dataset for Bhutan derived from CMIP6 Global Climate Models (GCMs). The pipeline provides <strong>121 sets of 19 standard BIOCLIM variables</strong> (Booth et al., 2014), spanning historical (1986–2015) and three future time slices (2021–2050, 2051–2080, 2071–2100) across four Shared Socioeconomic Pathways (SSP1-2.6, SSP2-4.5, SSP3-7.0, and SSP5-8.5) using 10 GCMs.</p>
-        <p>CMIP6 GCM outputs were downscaled against historical data developed with Bhutan's national weather station network (Stewart et al., 2017; Stewart et al., 2021) using the <strong>delta change method</strong> applied to anomalies interpolated via <strong>bivariate thin plate splines</strong>. Bioclimatic variables were generated in R using the <code>dismo</code> package (Hijmans et al., 2017). The dataset is rigorously quality-controlled for spatial alignment and multicollinearity, providing a modeling-ready foundation for species distribution modeling (SDM), climate vulnerability assessments, and environmental applications across the Eastern Himalayas.</p>
+        <p>CMIP6 GCM outputs were downscaled against historical data developed with Bhutan's national weather station network (Stewart et al., 2017; Stewart et al., 2021) using the <strong>delta change method</strong> applied to anomalies interpolated via <strong>bivariate thin plate splines</strong>. Bioclimatic variables were computed in R using the <code>terra</code> package (Hijmans et al., 2023), with automatic unit conversion from Kelvin to °C and from kg m⁻² s⁻¹ to mm month⁻¹ where required. The pipeline — not the rasters — is what this repository provides: a reproducible, scripted workflow that any user can run on the CSIRO source data to obtain analysis-ready bioclimatic layers. The dataset is rigorously quality-controlled for spatial alignment and multicollinearity, providing a modeling-ready foundation for species distribution modeling (SDM), climate vulnerability assessments, and environmental applications across the Eastern Himalayas.</p>
         <div class="box box-jade" style="margin-top:1.5rem">
           <div class="box-title" style="color:var(--jade)">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
@@ -1063,7 +1063,7 @@
             <tbody>
               <tr>
                 <td><strong>BIOCLIM Variables</strong></td>
-                <td>Not provided — user computation required (8–12 hrs)</td>
+                <td>Not provided — user computation required</td>
                 <td><span class="badge badge-success">✓ Included</span> 19 variables computed by pipeline for all GCM/SSP combinations</td>
               </tr>
               <tr>
@@ -1073,8 +1073,8 @@
               </tr>
               <tr>
                 <td><strong>Quality Assurance</strong></td>
-                <td>Not documented</td>
-                <td><span class="badge badge-success">✓ Validated</span> 2,489 rasters verified with QC reports in <code>06_quality_control</code></td>
+                <td>Not included in source dataset release</td>
+                <td><span class="badge badge-success">✓ Validated</span> QC reports in <code>06_quality_control/</code> covering alignment, CRS, extent, resolution, and NA checks</td>
               </tr>
               <tr>
                 <td><strong>Multicollinearity Assessment</strong></td>
@@ -1084,7 +1084,7 @@
               <tr>
                 <td><strong>Model-Ready Products</strong></td>
                 <td>Manual stacking and formatting required</td>
-                <td><span class="badge badge-success">✓ Ready</span> Pre-stacked layers compatible with MaxEnt, biomod2, and other SDM platforms</td>
+                <td><span class="badge badge-success">✓ Pipeline provided</span> Outputs are standard GeoTIFFs loadable in MaxEnt, biomod2, and other SDM platforms — see §6.4 for loading examples</td>
               </tr>
               <tr>
                 <td><strong>Technical Documentation</strong></td>
@@ -1098,8 +1098,8 @@
               </tr>
               <tr>
                 <td><strong>Time to Analysis</strong></td>
-                <td>⏱ 1–2 weeks (manual preprocessing from scratch)</td>
-                <td><span class="badge badge-success">⏱ ~1 day — all preprocessing automated by pipeline</span></td>
+                <td>Substantial manual preprocessing required from scratch</td>
+                <td><span class="badge badge-success">✓ All computation automated by pipeline scripts</span></td>
               </tr>
             </tbody>
           </table>
@@ -1117,13 +1117,13 @@
               Without This Pipeline
             </div>
             <ul style="margin:0;padding-left:1.25rem">
-              <li>Download and organize 4,495 monthly CMIP6 files</li>
-              <li>Compute 19 BIOCLIM variables per GCM/SSP/period <strong>(8–12 hrs)</strong></li>
-              <li>Validate spatial alignment &amp; CRS consistency <strong>(2–3 hrs)</strong></li>
-              <li>Construct multi-model ensemble statistics <strong>(2–4 hrs)</strong></li>
-              <li>Perform multicollinearity diagnostics (VIF) <strong>(3–4 hrs)</strong></li>
-              <li>Prepare standardized model-ready raster stacks <strong>(4–6 hrs)</strong></li>
-              <li style="margin-top:0.75rem;font-weight:600;color:var(--text)">Total: ~20 hours preprocessing before analysis</li>
+              <li>Download and organize all monthly CMIP6 source files</li>
+              <li>Write code to compute 19 BIOCLIM variables per GCM/SSP/period</li>
+              <li>Validate spatial alignment &amp; CRS consistency</li>
+              <li>Construct multi-model ensemble statistics</li>
+              <li>Perform multicollinearity diagnostics (VIF)</li>
+              <li>Prepare model-ready raster stacks</li>
+              <li style="margin-top:0.75rem;font-weight:600;color:var(--text)">Substantial preprocessing effort required before analysis can begin</li>
             </ul>
           </div>
           <div class="box box-jade">
@@ -1133,13 +1133,13 @@
             </div>
             <ul style="margin:0;padding-left:1.25rem">
               <li>Download source data from <a href="https://doi.org/10.25919/pec2-hs50">CSIRO (Dorji et al., 2025)</a></li>
-              <li>Place monthly rasters in <code>01_raw_cmip6_data/01_cmip6_monthly/</code></li>
-              <li>Run: <code>pwsh -File 10_scripts/ps/run_all.ps1</code></li>
-              <li><span class="badge badge-success">✓</span> BIOCLIM variables computed and validated automatically</li>
-              <li><span class="badge badge-success">✓</span> Spatial alignment verified (2,489 rasters)</li>
-              <li><span class="badge badge-success">✓</span> Ensemble products (mean, SD, min, max) prepared</li>
-              <li><span class="badge badge-success">✓</span> Multicollinearity analysis complete</li>
-              <li style="margin-top:0.75rem;font-weight:600;color:var(--text)">Total: ~1 day — all steps automated, no code to write</li>
+              <li>Place monthly rasters in <code>01_raw_cmip6_data/01_cmip6_monthly/</code> preserving the GCM/period/SSP folder structure</li>
+              <li>Run: <code>Rscript 10_scripts/r/bioclim_master.R --input_root ./01_raw_cmip6_data/01_cmip6_monthly --output_root ./03_bioclim_variables/01_bioclim_by_gcm</code></li>
+              <li><span class="badge badge-success">✓</span> BIO1–BIO19 computed automatically for all GCMs, SSPs, and time periods</li>
+              <li><span class="badge badge-success">✓</span> Run <code>Rscript 10_scripts/r/build_ensembles.R</code> to generate ensemble products (mean, SD, min, max)</li>
+              <li><span class="badge badge-success">✓</span> Run <code>Rscript 10_scripts/r/qc_validation.R</code> for spatial alignment and CRS checks</li>
+              <li><span class="badge badge-success">✓</span> Run <code>Rscript 10_scripts/r/multicollinearity_screening.R</code> for VIF predictor screening</li>
+              <li style="margin-top:0.75rem;font-weight:600;color:var(--text)">All steps fully scripted — no preprocessing code to write</li>
             </ul>
           </div>
         </div>
@@ -1171,8 +1171,14 @@
         <div class="alert alert-success" style="margin-top:1.5rem">
           <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
           <div class="alert-content">
-            <div class="alert-title">Getting Started</div>
-            <p><strong>The CSIRO dataset provides raw climate variables (ingredients). BhutanBioClims v1.0 provides the pipeline to compute analysis-ready bioclimatic products (finished output).</strong> To get started: (1) download source data from <a href="https://doi.org/10.25919/pec2-hs50">https://doi.org/10.25919/pec2-hs50</a>, (2) place files in <code>01_raw_cmip6_data/01_cmip6_monthly/</code>, (3) run the automated pipeline. All preprocessing is scripted — no need to write code from scratch.</p>
+            <div class="alert-title">Getting Started — This repository shares code, not rasters</div>
+            <p><strong>The CSIRO dataset provides raw climate variables (ingredients). BhutanBioClims v1.0 provides the R pipeline to compute analysis-ready bioclimatic products (finished output).</strong> To get started:</p>
+            <ol style="margin:0.5rem 0 0.5rem 1.25rem;font-size:0.875rem">
+              <li>Download source climate grids from <a href="https://doi.org/10.25919/pec2-hs50">https://doi.org/10.25919/pec2-hs50</a></li>
+              <li>Place the monthly rasters in <code>01_raw_cmip6_data/01_cmip6_monthly/</code> (preserving the GCM/period/SSP folder structure)</li>
+              <li>Run the pipeline: <code>Rscript 10_scripts/r/bioclim_master.R --input_root ./01_raw_cmip6_data/01_cmip6_monthly --output_root ./03_bioclim_variables/01_bioclim_by_gcm</code></li>
+            </ol>
+            <p style="margin:0">Unit conversion and BIO1–BIO19 computation are handled by <code>bioclim_master.R</code>. Ensemble aggregation, QC validation, and multicollinearity screening each have dedicated scripts — all fully scripted, no code to write from scratch.</p>
           </div>
         </div>
       </section>
@@ -1191,7 +1197,7 @@
               <tr><th>Geographic Extent (WGS84)</th><td colspan="3">26°42′N – 28°12′N, 88°42′E – 92°9′E (Bhutan National Boundary)</td></tr>
               <tr><th>Spatial Extent (EPSG:5266)</th><td colspan="3">xmin: 125,694.5 &nbsp;|&nbsp; ymin: 2,954,438 &nbsp;|&nbsp; xmax: 460,694.5 &nbsp;|&nbsp; ymax: 3,125,938</td></tr>
               <tr><th>CRS / EPSG</th><td>DRUKREF 03 / Bhutan National Grid (EPSG:5266)</td><th>Datum</th><td>D_DRUKREF_03</td></tr>
-              <tr><th>Pixel Size</th><td>250 m (approx. 9 arc-seconds)</td><th>Grid Alignment</th><td><span class="badge badge-success">Validated</span> 2,489 rasters</td></tr>
+              <tr><th>Pixel Size</th><td>250 m (approx. 9 arc-seconds)</td><th>Grid Alignment</th><td><span class="badge badge-success">Validated</span> via <code>qc_validation.R</code></td></tr>
               <tr><th>Nodata Value</th><td>−9999</td><th>Units</th><td>°C (Temperature) · mm (Precipitation)</td></tr>
               <tr><th>Temporal Coverage</th><td>1986 – 2100</td><th>Time Slices</th><td>Historical · 2021–50 · 2051–80 · 2071–2100</td></tr>
               <tr><th>Scenarios</th><td colspan="3">SSP1-2.6 · SSP2-4.5 · SSP3-7.0 · SSP5-8.5</td></tr>
@@ -1213,13 +1219,13 @@
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-          2.1 Source Data &amp; Preprocessing
+          3.1 Source Data &amp; Preprocessing
         </h3>
         <p>The primary inputs are monthly mean temperature, minimum temperature, maximum temperature, and precipitation grids obtained from <strong>Dorji et al. (2025)</strong>. Source data were generated via downscaling to a 250 m resolution. Monthly files are organized by GCM, SSP, and time slice in the <code>01_raw_cmip6_data</code> directory.</p>
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M7 19h10v-2H7v2zm15-7H2v2h20v-2zM7 5v2h10V5H7z"/></svg>
-          2.2 Bias Correction
+          3.2 Bias Correction
         </h3>
         <div class="alert alert-info">
           <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
@@ -1231,19 +1237,20 @@
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-          2.3 Downscaling
+          3.3 Downscaling
         </h3>
         <p>The source data from Dorji et al. (2025) were downscaled to <strong>250 m resolution</strong> using statistical downscaling methods. The source dataset provides monthly temperature (mean, minimum, maximum) and precipitation grids for Bhutan. Details of the downscaling technique are available in the source publication.</p>
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-          2.4 BIOCLIM Derivation
+          3.4 BIOCLIM Derivation
         </h3>
-        <p>The <strong>19 standard bioclimatic variables</strong> were derived using the <code>terra</code> and <code>dismo</code> R packages based on definitions established by WorldClim. These variables capture annual trends, seasonality, and extreme or limiting environmental factors.</p>
+        <p>The <strong>19 standard bioclimatic variables</strong> (BIO1–BIO19) were computed from monthly <code>tasmin</code>, <code>tasmax</code>, and <code>pr</code> rasters using the <code>terra</code> R package (Hijmans et al., 2023), following the standard definitions of O'Donnell &amp; Ignizio (2012) and Nix (1986). These variables capture annual trends, seasonality, and extreme or limiting environmental factors.</p>
+        <p>Unit conversions are applied automatically by the pipeline: temperatures exceeding 150 (indicating Kelvin) are shifted by −273.15 to Celsius; precipitation values below 5 (indicating kg m⁻² s⁻¹) are multiplied by 2,628,000 to obtain mm month⁻¹. Quarterly variables (BIO8–BIO11, BIO16–BIO19) are computed using all 12 rolling 3-month windows via pixel-wise index operations — no approximation to fixed calendar quarters.</p>
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-          2.5 Ensemble Aggregation
+          3.5 Ensemble Aggregation
         </h3>
         <p>Multi-model ensembles are calculated across the 10 GCMs. Aggregation uses <strong>equal (unweighted) weighting</strong> for all models, computing the arithmetic mean across all available GCMs for each time slice, scenario, and BIOCLIM variable.</p>
         <div class="formula"><strong>Ensemble Mean:</strong> μ = (1/n) × Σ GCM<sub>i</sub></div>
@@ -1251,16 +1258,16 @@
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-          2.6 Quality Control Acceptance Criteria
+          3.6 Quality Control Acceptance Criteria
         </h3>
         <p>A file is only promoted to release status if it meets all criteria:</p>
         <ul>
-          <li><strong>Alignment:</strong> 100% pixel-perfect alignment with the Bhutan National Mask <span class="badge badge-success">2,489 rasters validated</span></li>
+          <li><strong>Alignment:</strong> 100% pixel-perfect alignment with the Bhutan National Mask — verified by <code>qc_validation.R</code></li>
           <li><strong>CRS:</strong> Correct projection (EPSG:5266 — DRUKREF 03) embedded in metadata</li>
           <li><strong>Extent:</strong> xmin: 125,694.5 · ymin: 2,954,438 · xmax: 460,694.5 · ymax: 3,125,938 (EPSG:5266)</li>
           <li><strong>Completeness:</strong> No missing pixels within the Bhutan administrative boundary</li>
           <li><strong>Range Check:</strong> Values within physically plausible bounds (e.g., BIO01 between −30°C and +40°C)</li>
-          <li><strong>Integrity:</strong> SHA256 checksums match the manifest</li>
+          <li><strong>Integrity:</strong> File integrity verified — see <code>06_quality_control/integrity_summary.json</code></li>
         </ul>
       </section>
 
@@ -1282,10 +1289,10 @@
               <tr><td><code>00_project_metadata</code></td><td>Manifests, citations, and guides</td><td>Metadata and provenance</td></tr>
               <tr><td><code>01_raw_cmip6_data</code></td><td>Source monthly rasters from CSIRO</td><td>Pipeline input (place downloaded data here)</td></tr>
               <tr><td><code>03_bioclim_variables</code></td><td>Per-GCM BIOCLIM rasters</td><td>GCM variability analysis</td></tr>
-              <tr><td><code>04_ensemble_products</code></td><td>Mean, SD, Min, and Max</td><td><strong>Primary source for projections</strong></td></tr>
+              <tr><td><code>04_ensemble_products</code></td><td>Ensemble mean, standard deviation, minimum, maximum — one subdirectory per statistic</td><td><strong>Primary source for projections and uncertainty assessment</strong></td></tr>
               <tr><td><code>05_multicollinearity_analysis</code></td><td>VIF and correlation reports</td><td>Predictor screening</td></tr>
               <tr><td><code>06_quality_control</code></td><td>Alignment and integrity reports</td><td>QC verification</td></tr>
-              <tr><td><code>08_model_ready_layers</code></td><td>Standardized raster stacks</td><td>Direct SDM input</td></tr>
+              <tr><td><code>08_model_ready_layers</code></td><td>Placeholder for SDM-ready predictor stacks after QA and VIF selection</td><td>Intended destination for curated SDM-ready outputs</td></tr>
               <tr><td><code>10_scripts</code></td><td>R and PowerShell pipeline scripts</td><td>All processing automation</td></tr>
             </tbody>
           </table>
@@ -1309,6 +1316,93 @@
             </table>
           </div>
         </div>
+
+        <h3>
+          <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+          Pipeline Scripts
+        </h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Script</th><th>Location</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>bioclim_master.R</code></td><td><code>10_scripts/r/</code></td><td>Main entry point — computes BIO1–BIO19 from monthly rasters and runs ensemble aggregation for all GCMs, SSPs, and time periods</td></tr>
+              <tr><td><code>build_ensembles.R</code></td><td><code>10_scripts/r/</code></td><td>Reads per-GCM outputs from <code>03_bioclim_variables/01_bioclim_by_gcm</code> and writes ensemble mean, standard deviation, minimum, and maximum to <code>04_ensemble_products/</code></td></tr>
+              <tr><td><code>multicollinearity_screening.R</code></td><td><code>10_scripts/r/</code></td><td>Pearson correlation matrix and iterative VIF analysis on ensemble mean layers for predictor screening; reads from <code>04_ensemble_products/ensemble_mean/</code></td></tr>
+              <tr><td><code>qc_validation.R</code></td><td><code>10_scripts/r/</code></td><td>Spatial alignment, CRS, extent, resolution, and NA-proportion checks across all output rasters in <code>03_bioclim_variables/01_bioclim_by_gcm</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Running the Pipeline
+        </h3>
+        <p>The main entry point is <code>bioclim_master.R</code>. It auto-detects all GCMs, time periods, and SSP scenarios from the input directory structure — no configuration file needed.</p>
+        <pre><code># Minimal — auto-detect all models, periods, and scenarios
+Rscript 10_scripts/r/bioclim_master.R \
+  --input_root ./01_raw_cmip6_data/01_cmip6_monthly \
+  --output_root ./03_bioclim_variables/01_bioclim_by_gcm
+
+# Selective run — specify models and scenarios, tune memory
+Rscript 10_scripts/r/bioclim_master.R \
+  --input_root ./01_raw_cmip6_data/01_cmip6_monthly \
+  --output_root ./03_bioclim_variables/01_bioclim_by_gcm \
+  --models "ACCES_CM2,MIROC6,NorESM2-MM" \
+  --scenarios "SSP245,SSP585" \
+  --overwrite TRUE \
+  --memfrac 0.5 \
+  --tempdir "D:/terra_scratch"
+
+# Run multicollinearity screening after BIO computation
+Rscript 10_scripts/r/multicollinearity_screening.R \
+  --project_root . \
+  --time_slice "1986_2015" \
+  --scenario "historical"</code></pre>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Argument</th><th>Default</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>--input_root</code></td><td><em>required</em></td><td>Root directory containing CMIP6 monthly rasters (the <code>01_raw_cmip6_data/01_cmip6_monthly</code> folder)</td></tr>
+              <tr><td><code>--output_root</code></td><td><em>required</em></td><td>Destination root for BIO1–BIO19 GeoTIFF outputs</td></tr>
+              <tr><td><code>--models</code></td><td>auto-detect</td><td>Comma-separated GCM folder names (e.g., <code>ACCES_CM2,MIROC6</code>)</td></tr>
+              <tr><td><code>--periods</code></td><td>auto-detect</td><td>Comma-separated time periods (e.g., <code>1986-2015,2021-2050</code>)</td></tr>
+              <tr><td><code>--scenarios</code></td><td>auto-detect</td><td>Comma-separated SSP codes (e.g., <code>SSP245,SSP585</code>)</td></tr>
+              <tr><td><code>--ensemble_stats</code></td><td><code>mean,median,min,max,sd</code></td><td>Statistics to compute for multi-model ensemble</td></tr>
+              <tr><td><code>--skip_ensemble</code></td><td><code>FALSE</code></td><td>Skip ensemble step (use when running per-GCM outputs only)</td></tr>
+              <tr><td><code>--overwrite</code></td><td><code>FALSE</code></td><td>Overwrite existing output files</td></tr>
+              <tr><td><code>--memfrac</code></td><td><code>0.3</code></td><td>Fraction of RAM allocated to <code>terra</code>; increase on high-RAM systems</td></tr>
+              <tr><td><code>--tempdir</code></td><td>system temp</td><td>Scratch directory for <code>terra</code> disk-backed operations; redirect to a fast disk if possible</td></tr>
+              <tr><td><code>--log_root</code></td><td><code>&lt;output_root&gt;/_logs</code></td><td>Directory for timestamped run logs and summary CSV</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+          Output Filename Convention &amp; GeoTIFF Specifications
+        </h3>
+        <p>All output rasters use a standardized naming pattern that encodes model, scenario, period, and variable:</p>
+        <div class="formula">bhutan_cmip6_{model}_{scenario}_{period}_bio{nn}_v1_0.tif</div>
+        <p style="margin-top:0.75rem">Example: <code>bhutan_cmip6_access_cm2_ssp245_2021_2050_bio01_v1_0.tif</code></p>
+        <div class="table-wrap" style="margin-top:1rem">
+          <table>
+            <thead><tr><th>GeoTIFF Specification</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Compression</td><td>DEFLATE · Predictor = 2 (horizontal differencing)</td></tr>
+              <tr><td>Tiling</td><td>YES — optimized for spatial subsetting without full file read</td></tr>
+              <tr><td>No-data flag</td><td>−9999</td></tr>
+              <tr><td>CRS</td><td>EPSG:5266 — DRUKREF 03 / Bhutan National Grid</td></tr>
+              <tr><td>Pixel size</td><td>250 m</td></tr>
+              <tr><td>Memory strategy</td><td>Disk-backed <code>terra</code> operations; never loads the full dataset into RAM</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </section>
 
       <!-- ░░ UNCERTAINTY ░░ -->
@@ -1346,7 +1440,7 @@
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          5.1 Multicollinearity Screening
+          6.1 Multicollinearity Screening
         </h3>
         <p>To avoid overfitting, screen predictors before training models:</p>
         <ul>
@@ -1358,7 +1452,7 @@
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.48 2 12c0 4.23 2.71 7.82 6.5 9.12.28.09.59-.05.69-.33l.56-1.63c.08-.23.01-.49-.18-.65C7.63 17.01 6.5 14.66 6.5 12c0-3.03 2.47-5.5 5.5-5.5S17.5 8.97 17.5 12c0 1.63-.71 3.1-1.83 4.12l1.42 1.42c.2.2.52.2.71 0l1.42-1.42c.2-.2.2-.52 0-.71l-1.42-1.42C19.29 12.71 20 11.13 20 9.5 20 5.36 16.42 2 12 2z"/></svg>
-          5.2 Spatial Autocorrelation
+          6.2 Spatial Autocorrelation
         </h3>
         <p>High-resolution grids often exhibit strong spatial autocorrelation. We recommend:</p>
         <ul>
@@ -1368,12 +1462,77 @@
 
         <h3>
           <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-          5.3 Scenario Reporting Template
+          6.3 Scenario Reporting Template
         </h3>
         <p>When reporting results, use a template such as:</p>
         <div class="box box-amber" style="border-left:3px solid var(--amber);border-radius:var(--r-md);padding:1rem 1.25rem">
           <em style="color:var(--text-2);font-size:0.9rem">"Predictions were generated for 2051–2080 under the SSP2-4.5 scenario, representing an intermediate emissions trajectory using a 10-GCM ensemble mean (Bhutan CMIP6 BIOCLIM v1.0)."</em>
         </div>
+
+        <h3>
+          <svg viewBox="0 0 24 24"><path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2z"/></svg>
+          6.4 Loading Pipeline Outputs in R
+        </h3>
+        <p>All pipeline outputs are standard compressed GeoTIFFs loadable with any R spatial library. Use <code>terra</code> (recommended, matches the pipeline) or <code>sf</code>/<code>stars</code> as needed.</p>
+        <pre><code>library(terra)
+
+# ── Single ensemble mean raster (historical BIO01) ───────────────────
+# Filename pattern: bhutan_cmip6_ensemble_{stat}_{ssp}_{period}_{bio}_v1_0.tif
+bio01_hist &lt;- rast(
+  "04_ensemble_products/ensemble_mean/1986_2015/historical/bhutan_cmip6_ensemble_mean_historical_1986_2015_bio01_v1_0.tif"
+)
+
+# ── Full 19-variable ensemble mean stack for a future scenario ────────
+ssp245_2050 &lt;- rast(
+  list.files(
+    "04_ensemble_products/ensemble_mean/2021_2050/ssp245/",
+    pattern = "^bhutan_cmip6_ensemble_mean.*\\.tif$",
+    full.names = TRUE
+  )
+)
+
+# ── Ensemble standard deviation (uncertainty map) ─────────────────────
+bio01_sd &lt;- rast(
+  "04_ensemble_products/ensemble_standard_deviation/2021_2050/ssp245/bhutan_cmip6_ensemble_standard_deviation_ssp245_2021_2050_bio01_v1_0.tif"
+)
+
+# ── VIF-screened predictor set for SDM ───────────────────────────────
+# Consult 05_multicollinearity_analysis/selected_predictors.txt for retained variables.
+# Load only those from the ensemble mean directory:
+selected_vars &lt;- readLines("05_multicollinearity_analysis/selected_predictors.txt")
+mean_files &lt;- list.files(
+  "04_ensemble_products/ensemble_mean/1986_2015/historical/",
+  pattern = "\\.tif$", full.names = TRUE
+)
+sdm_predictors &lt;- rast(
+  mean_files[sapply(mean_files, function(f)
+    any(sapply(selected_vars, function(v) grepl(v, basename(f), fixed = TRUE)))
+  )]
+)
+
+# ── Stack individual GCM outputs to quantify inter-model spread ───────
+# Per-GCM file pattern: bhutan_cmip6_{model}_{scenario}_{period}_{bio}_v1_0.tif
+gcm_bio01 &lt;- rast(
+  list.files(
+    "03_bioclim_variables/01_bioclim_by_gcm/",
+    pattern = "bio01_v1_0\\.tif$",
+    recursive = TRUE, full.names = TRUE
+  )
+)
+bio01_range &lt;- max(gcm_bio01) - min(gcm_bio01)  # pixel-wise inter-model range
+
+# ── Extract values at species occurrence points ───────────────────────
+# occ_pts &lt;- vect("occurrences.gpkg")
+# climate_vals &lt;- extract(sdm_predictors, occ_pts)</code></pre>
+
+        <div class="alert alert-info" style="margin-top:0.5rem">
+          <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+          <div class="alert-content">
+            <div class="alert-title">Consult the VIF results before stacking predictors</div>
+            <p>Check <code>05_multicollinearity_analysis/vif_results.csv</code> and use only the retained variable set listed there. Loading all 19 variables without screening will introduce collinearity into your SDM.</p>
+          </div>
+        </div>
+
       </section>
 
       <!-- ░░ LIMITATIONS ░░ -->
@@ -1497,8 +1656,10 @@ for the Bhutan CMIP6 BIOCLIM Infrastructure (v1.0). Thimphu, Bhutan.</code></pre
           </div>
           <ul style="margin:0;padding-left:1.25rem;font-size:0.825rem;color:var(--text-2)">
             <li style="margin-bottom:0.5rem"><strong>Booth et al. (2014).</strong> bioclim: the first species distribution modelling package. <em>Diversity and Distributions</em>, 20(1), 1–9. <a href="https://doi.org/10.1111/ddi.12144">doi:10.1111/ddi.12144</a></li>
+            <li style="margin-bottom:0.5rem"><strong>O'Donnell, M.S. &amp; Ignizio, D.A. (2012).</strong> Bioclimatic predictors for supporting ecological applications in the conterminous United States. <em>U.S. Geological Survey Data Series 691</em>.</li>
+            <li style="margin-bottom:0.5rem"><strong>Nix, H.A. (1986).</strong> A biogeographic analysis of Australian elapid snakes. In: Longmore, R. (ed.), <em>Atlas of Elapid Snakes of Australia</em>, pp. 4–15. Australian Government Publishing Service, Canberra.</li>
             <li style="margin-bottom:0.5rem"><strong>Dorji et al. (2025).</strong> Comparative Analysis of Mechanistic and Correlative Models for Bhutan. <em>Plants</em>, 14(1). <a href="https://doi.org/10.3390/plants14010083">doi:10.3390/plants14010083</a></li>
-            <li style="margin-bottom:0.5rem"><strong>Hijmans et al. (2017).</strong> dismo: Species Distribution Modeling. R package v1.1-4. <a href="https://CRAN.R-project.org/package=dismo">CRAN</a></li>
+            <li style="margin-bottom:0.5rem"><strong>Hijmans, R.J. et al. (2023).</strong> terra: Spatial Data Analysis. R package v1.7. <a href="https://CRAN.R-project.org/package=terra">CRAN</a></li>
             <li style="margin-bottom:0.5rem"><strong>O'Neill et al. (2016).</strong> The Scenario Model Intercomparison Project (ScenarioMIP) for CMIP6. <em>Geosci. Model Dev.</em>, 9(9). <a href="https://doi.org/10.5194/gmd-9-3461-2016">doi:10.5194/gmd-9-3461-2016</a></li>
             <li style="margin-bottom:0.5rem"><strong>Riahi et al. (2017).</strong> The Shared Socioeconomic Pathways. <em>Global Environmental Change</em>, 42:153–168.</li>
             <li style="margin-bottom:0.5rem"><strong>Stewart et al. (2017).</strong> Topography and the north Indian monsoon on climate interpolation in Bhutan. <em>Int. J. Climatology</em>, 37(S1). <a href="https://doi.org/10.1002/joc.5045">doi:10.1002/joc.5045</a></li>
@@ -1525,8 +1686,8 @@ for the Bhutan CMIP6 BIOCLIM Infrastructure (v1.0). Thimphu, Bhutan.</code></pre
         </div>
 
         <ul class="checklist">
-          <li><input type="checkbox" id="c1" checked><label for="c1">Checksums (SHA256) generated for all rasters</label></li>
-          <li><input type="checkbox" id="c2" checked><label for="c2">Quality Control (QC) alignment report passed — <strong>2,489 rasters validated</strong></label></li>
+          <li><input type="checkbox" id="c1" checked><label for="c1">File integrity verified — see <code>06_quality_control/integrity_summary.json</code></label></li>
+          <li><input type="checkbox" id="c2" checked><label for="c2">Quality Control (QC) alignment report passed — see <code>06_quality_control/raster_alignment_report.txt</code></label></li>
           <li><input type="checkbox" id="c3" checked><label for="c3">GCM inventory (n=10) confirmed</label></li>
           <li><input type="checkbox" id="c4" checked><label for="c4"><strong>EPSG code confirmed</strong> (EPSG:5266 — DRUKREF 03 / Bhutan National Grid)</label></li>
           <li><input type="checkbox" id="c5" checked><label for="c5"><strong>Bias correction documented</strong> (Applied by Dorji et al. 2025 — see source publication)</label></li>
